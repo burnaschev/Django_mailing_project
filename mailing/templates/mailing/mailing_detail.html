@@ -1,0 +1,36 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">Информация о сообщений</h1>
+    </div>
+    <div class="col-12">
+        <div class="row">
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Тема: {{ object.message.message_subject }}
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            Описание: {{ object.message.message_body }}
+                        </p>
+                        <p>
+                            Статус: {{ object.status }}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <h6>
+                            {{ object.users| default:'Нету пользователя' }}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

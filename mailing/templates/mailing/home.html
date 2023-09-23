@@ -1,0 +1,40 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">Сервис рассылок</h1>
+    </div>
+    <div>
+        <p class="fs-4">3 случайные статьи из блога:</p>
+        <p>
+            <button class="p-2 btn btn-outline-success" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#bye" aria-expanded="false"
+                    aria-controls="bye">
+                Статьй
+            </button>
+        </p>
+
+        {% for object in random_articles %}
+            <div class="collapse mb-2" id="bye">
+                <div class="card card-body">
+                    <li><a class="text-muted" href="{% url 'blog:view' object.pk %}">{{ object.header }}</a></li>
+                    {{ object.content|truncatechars:50 }}
+                </div>
+            </div>
+        {% endfor %}
+        <div class="col-12">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Статистика рассылок</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Всего рассылок: {{ total_mailings }}</p>
+                        <p>Активных рассылок: {{ active_mailings }}</p>
+                        <p>Уникальных клиентов для рассылок: {{ unique_clients }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

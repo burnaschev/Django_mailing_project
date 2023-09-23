@@ -1,0 +1,44 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">Клиенты рассылки</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {% for item in client_mailings %}
+                            {% if item.client %}
+                                <li>{{ item.client }}/{{ item.mailing }}
+                                    <a class="text-muted"
+                                       href="{% url 'mailing:mailing_clients_toggle' mailing_pk item.client.pk %}">Убрать</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'mailing:list' %}" class="btn btn-info">Назад</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">Клиенты для добавления</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {% for item in clients %}
+                            {% if item.pk %}
+                            <li>
+                                {{ item }}
+                                <a class="text-muted"
+                                   href="{% url 'mailing:mailing_clients_toggle' mailing_pk item.pk %}">Добавить</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

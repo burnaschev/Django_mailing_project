@@ -1,0 +1,39 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">Информация о статье</h1>
+    </div>
+    <div class="col-12">
+        <div class="row">
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            Тема: {{ object.header }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            Описание: {{ object.content }}
+                        </p>
+                        <p>
+                            Дата создания: {{ object.create_date }}
+                        </p>
+                        <p>
+                            Количество просмотров: {{ object.count_views }}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <h6>
+                            {{ object.users| default:'Нету пользователя' }}
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
