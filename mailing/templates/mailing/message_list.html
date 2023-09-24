@@ -21,8 +21,10 @@
                             <li>{{ object.message_body }}</li>
                         </ul>
                         <div class="btn-group ml-4">
+                            {% if perms.mailing.change_message %}
                             <a class="p-2 btn btn-outline-primary"
                                href="{% url 'mailing:messages_update' object.pk %}">Изменение</a>
+                            {% endif %}
                             <a class="p-2 btn btn-outline-danger"
                                href="{% url 'mailing:messages_delete' object.pk %}">Удаление</a>
                         </div>

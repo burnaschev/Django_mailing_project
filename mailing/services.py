@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -30,10 +30,16 @@ def send_mailing(mailing_settings, client_m):
 
 
 def send_mails():
-    date_now = datetime.datetime.now(datetime.timezone.utc)
+    current_time = datetime.utcnow()
+    current_date = datetime.utcnow().date()
     for mailing_settings in Mailing.objects.filter(status=Mailing.STARTED):
+        # print(mailing_settings.time_stop)
+        start_date = datetime.combine(current_date, mailing_settings.time_start)
+        current_stop_date = datetime.combine(current_date, mailing_settings.time_stop)
+        stop_date = current_stop_date if mailing_settings.time_stop > mailing_settings.time_start else current_stop_date + timedelta(
+            hours=24)
 
-        if (date_now.time() > mailing_settings.time_start) and (date_now.time() < mailing_settings.time_stop):
+        if start_date < current_time and current_time < stop_date:
 
             client_mailing = mailing_settings.clientmailing_set.all()
             for client_m in client_mailing:
@@ -42,19 +48,19 @@ def send_mails():
                 )
 
                 if logs.exists():
-                    last_try_date = logs.order_by('-date_time').first().date_time
+                    last_try_date = logs.order_by('-date_time').first().date_time.replace(tzinfo=None)
 
                     if mailing_settings.mailing_period == Mailing.D:
-                        if (date_now - last_try_date).days >= 1:
+                        if (current_time - last_try_date).days >= 1:
                             send_mailing(mailing_settings, client_m)
 
                     elif mailing_settings.mailing_period == Mailing.W:
-                        if (date_now - last_try_date).days >= 7:
+                        if (current_time - last_try_date).days >= 7:
                             send_mailing(mailing_settings, client_m)
 
                     elif mailing_settings.mailing_period == Mailing.M:
 
-                        if (date_now - last_try_date).days >= 30:
+                        if (current_time - last_try_date).days >= 30:
                             send_mailing(mailing_settings, client_m)
 
                 else:

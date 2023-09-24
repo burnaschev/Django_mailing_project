@@ -6,9 +6,9 @@
     </div>
     <div class="row text-center">
         <div class="col-12">
-            <div class="col-12">
-                <a class='btn btn-primary' href="{% url 'mailing:create' %}">Добавить рассылку</a>
-            </div>
+                <div class="col-12">
+                    <a class='btn btn-primary' href="{% url 'mailing:create' %}">Добавить рассылку</a>
+                </div>
         </div>
         {% for object in object_list %}
             <div class="p-3 col-3">
@@ -21,12 +21,29 @@
                             <li>{{ object.message.message_body|truncatechars:30 }}</li>
                         </ul>
                         <div class="btn-group ml-4">
-                            <a class="p-2 btn btn-outline-primary"
-                               href="{% url 'mailing:mailing_clients' object.pk %}">Клиенты</a>
-                            <a class="p-2 btn btn-outline-primary"
-                               href="{% url 'mailing:edit' object.pk %}">Изменение</a>
+                            {% if object.users %}
+                                <a class="p-2 btn btn-outline-primary"
+                                   href="{% url 'mailing:edit' object.pk %}">Изменение</a>
+                            {% endif %}
                             <a class="p-2 btn btn-outline-danger"
-                               href="{% url 'mailing:delete' object.pk %}">Удаление</a>
+                               href="{% url 'mailing:view' object.pk %}">Просмотр</a>
+                            {% if object.users %}
+                                <a class="p-2 btn btn-outline-danger"
+                                   href="{% url 'mailing:delete' object.pk %}">Удаление</a>
+                            {% endif %}
+                        </div>
+                        <div class="btn-group ml-4">
+                            <a class="p-2 btn btn-outline-success mt-2"
+                               href="{% url 'mailing:mailing_clients' object.pk %}">Клиенты</a>
+                            {% if not object.users %}
+                                {% if object.status == object.STARTED %}
+                                    <a class="p-2 btn btn-outline-success mt-2"
+                                       href="{% url 'mailing:stop_mailing' object.pk %}">Остановить рассылку</a>
+                                {% else %}
+                                    <a class="p-2 btn btn-outline-success mt-2"
+                                       href="{% url 'mailing:stop_mailing' object.pk %}">Запустить рассылку</a>
+                                {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>

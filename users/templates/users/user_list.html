@@ -2,32 +2,30 @@
 
 {% block content %}
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4">Блог</h1>
+        <h1 class="display-4">Список пользователей</h1>
     </div>
     <div class="row text-center">
         <div class="col-12">
-            <div class="col-12">
-                <a class='btn btn-primary' href="{% url 'blog:create' %}">Добавить статью</a>
-            </div>
         </div>
         {% for object in object_list %}
             <div class="p-3 col-3">
                 <div class="card mb-4 box-shadow">
                     <div class="card-header">
-                        <h4 class="my-0 font-weight-normal">{{ object.header }}</h4>
+                        <h4 class="my-0 font-weight-normal">{{ object.username }}</h4>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mt-3 mb-4 text-start m-3">
-                            <li>{{ object.content|truncatechars:30 }}</li>
+                            <li>{{ object.email }}</li>
                         </ul>
                         <div class="btn-group ml-4">
-                            <a class="p-2 btn btn-outline-primary"
-                               href="{% url 'blog:edit' object.pk %}">Изменение</a>
-                            <a class="p-2 btn btn-outline-danger"
-                               href="{% url 'blog:delete' object.pk %}">Удаление</a>
                         </div>
+                        {% if object.is_active %}
+                            <a class="p-2 btn btn-outline-success mt-2"
+                               href="{% url 'users:block_user' object.pk %}">Блокировать пользователя</a>
+                        {% else %}
                         <a class="p-2 btn btn-outline-success mt-2"
-                           href="{% url 'blog:view' object.pk %}">Просмотр</a>
+                           href="{% url 'users:block_user' object.pk %}">Разблокировать пользователя</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

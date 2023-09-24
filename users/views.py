@@ -1,14 +1,24 @@
 import random
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 
 from users.forms import UserRegisterForm, UserForm
 from users.models import User
 from users.services import send_new_password, send_verify_email
+
+
+class ManagerRequiredMixin(PermissionRequiredMixin):
+    permission_required = 'users.manager_access'
+
+    def handle_no_permission(self):
+        raise PermissionDenied
 
 
 class LoginView(BaseLoginView):
@@ -52,9 +62,35 @@ class UserUpdateView(UpdateView):
         return self.request.user
 
 
+class UserListView(ListView, ManagerRequiredMixin):
+    model = User
+
+
+    def get_queryset(self):
+        if self.request.user.groups.filter(name="manager").exists():
+            return User.objects.all()
+        else:
+            raise PermissionDenied('Доступ запрещен')
+
+
 def generate_new_password(request):
     new_password = ''.join([str(random.randint(0, 9)) for _ in range(12)])
     send_new_password(request.user.email, new_password)
     request.user.set_password(new_password)
     request.user.save()
     return redirect(reverse('catalog:home'))
+
+
+@login_required
+def block_user(request, pk):
+    if request.user.groups.filter(name="manager").exists():
+        user = User.objects.get(pk=pk)
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+        else:
+            user.is_active = False
+            user.save()
+        return redirect(reverse('users:user_list'))
+    else:
+        raise PermissionDenied('Доступ запрещен')

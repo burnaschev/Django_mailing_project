@@ -32,7 +32,7 @@
                             <li>
                                 {{ item }}
                                 <a class="text-muted"
-                                   href="{% url 'mailing:mailing_clients_toggle' mailing_pk item.pk %}">Добавить</a>
+                                   href="{% url 'mailing:mailing_clients_toggle' mailing_pk item.pk %}">Добавить\Убрать</a>
                             </li>
                             {% endif %}
                         {% endfor %}
