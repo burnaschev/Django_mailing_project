@@ -67,8 +67,8 @@ class UserListView(ListView, ManagerRequiredMixin):
 
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name="manager").exists():
-            return User.objects.all()
+        if self.request.user.groups.filter(name="manager").exists() or self.request.user.is_superuser:
+            return User.objects.filter(is_staff=False, is_superuser=False)
         else:
             raise PermissionDenied('Доступ запрещен')
 
@@ -83,7 +83,7 @@ def generate_new_password(request):
 
 @login_required
 def block_user(request, pk):
-    if request.user.groups.filter(name="manager").exists():
+    if request.user.groups.filter(name="manager").exists() or request.user.is_superuser:
         user = User.objects.get(pk=pk)
         if not user.is_active:
             user.is_active = True

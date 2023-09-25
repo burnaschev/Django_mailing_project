@@ -8,7 +8,6 @@
         <div class="col-12">
         </div>
         {% for object in object_list %}
-            {% if not user.is_superuser %}
                 <div class="p-3 col-3">
                 <div class="card mb-4 box-shadow">
                 <div class="card-header">
@@ -27,7 +26,6 @@
                     <a class="p-2 btn btn-outline-success mt-2"
                        href="{% url 'users:block_user' object.pk %}">Разблокировать пользователя</a>
                 {% endif %}
-            {% endif %}
         </div>
         </div>
         </div>

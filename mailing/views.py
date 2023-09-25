@@ -47,13 +47,8 @@ def contacts(request):
 class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
 
-    def get_context_data(self, *args, **kwargs):
-        context_data = super().get_context_data(*args, **kwargs)
-        # context_data['users'] = self.request.user.groups.filter(name="manager").exists()
-        return context_data
-
     def get_queryset(self):
-        if self.request.user.groups.filter(name="manager").exists():
+        if self.request.user.groups.filter(name="manager").exists() or self.request.user.is_superuser:
             return Mailing.objects.all()
         return Mailing.objects.filter(users=self.request.user)
 
@@ -62,7 +57,7 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name="manager").exists():
+        if self.request.user.groups.filter(name="manager").exists() or self.request.user.is_superuser:
             return Mailing.objects.all()
         return Mailing.objects.filter(users=self.request.user)
 
@@ -134,11 +129,6 @@ class MessageListView(LoginRequiredMixin, ListView):
     extra_context = {
         'title': 'Список сообщений'
     }
-
-    def get_context_data(self, *args, **kwargs):
-        context_data = super().get_context_data(*args, **kwargs)
-        context_data['users'] = self.request.user.groups.filter(name="manager").exists()
-        return context_data
 
 
 class MessageCreateView(LoginRequiredMixin, CreateView):
