@@ -8,27 +8,29 @@
         <div class="col-12">
         </div>
         {% for object in object_list %}
-            <div class="p-3 col-3">
+            {% if not user.is_superuser %}
+                <div class="p-3 col-3">
                 <div class="card mb-4 box-shadow">
-                    <div class="card-header">
-                        <h4 class="my-0 font-weight-normal">{{ object.username }}</h4>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled mt-3 mb-4 text-start m-3">
-                            <li>{{ object.email }}</li>
-                        </ul>
-                        <div class="btn-group ml-4">
-                        </div>
-                        {% if object.is_active %}
-                            <a class="p-2 btn btn-outline-success mt-2"
-                               href="{% url 'users:block_user' object.pk %}">Блокировать пользователя</a>
-                        {% else %}
-                        <a class="p-2 btn btn-outline-success mt-2"
-                           href="{% url 'users:block_user' object.pk %}">Разблокировать пользователя</a>
-                        {% endif %}
-                    </div>
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">{{ object.username }}</h4>
                 </div>
-            </div>
+                <div class="card-body">
+                <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                    <li>{{ object.email }}</li>
+                </ul>
+                <div class="btn-group ml-4">
+                </div>
+                {% if object.is_active %}
+                    <a class="p-2 btn btn-outline-success mt-2"
+                       href="{% url 'users:block_user' object.pk %}">Блокировать пользователя</a>
+                {% else %}
+                    <a class="p-2 btn btn-outline-success mt-2"
+                       href="{% url 'users:block_user' object.pk %}">Разблокировать пользователя</a>
+                {% endif %}
+            {% endif %}
+        </div>
+        </div>
+        </div>
         {% endfor %}
     </div>
 

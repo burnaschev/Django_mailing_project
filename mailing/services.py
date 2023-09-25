@@ -16,7 +16,7 @@ def send_mailing(mailing_settings, client_m):
             fail_silently=False,
         )
         status = Log.STATUS_OK
-        response = ''
+        response = '200'
     except Exception as e:
         status = Log.STATUS_FAILED
         response = str(e)
@@ -33,13 +33,12 @@ def send_mails():
     current_time = datetime.utcnow()
     current_date = datetime.utcnow().date()
     for mailing_settings in Mailing.objects.filter(status=Mailing.STARTED):
-        # print(mailing_settings.time_stop)
         start_date = datetime.combine(current_date, mailing_settings.time_start)
         current_stop_date = datetime.combine(current_date, mailing_settings.time_stop)
         stop_date = current_stop_date if mailing_settings.time_stop > mailing_settings.time_start else current_stop_date + timedelta(
             hours=24)
 
-        if start_date < current_time and current_time < stop_date:
+        if start_date < current_time < stop_date:
 
             client_mailing = mailing_settings.clientmailing_set.all()
             for client_m in client_mailing:
