@@ -158,5 +158,5 @@ CACHES = {
 }
 
 CRONJOBS = [
-    ('* * * * *', 'mailing.services.send_mails')
+    ('*/1 * * * *', 'mailing.services.send_mails')
 ]

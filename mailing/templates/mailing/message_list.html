@@ -21,7 +21,7 @@
                             <li>{{ object.message_body }}</li>
                         </ul>
                         <div class="btn-group ml-4">
-                            {% if perms.mailing.change_message %}
+                            {% if not user.is_staff %}
                             <a class="p-2 btn btn-outline-primary"
                                href="{% url 'mailing:messages_update' object.pk %}">Изменение</a>
                             {% endif %}

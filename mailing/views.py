@@ -1,7 +1,7 @@
 from random import sample
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
@@ -12,11 +12,12 @@ from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Mailing, ClientMailing, Client, Message
 
 
-class ManagerRequiredMixin(PermissionRequiredMixin):
-    if Mapermission_required = 'users.manager_access'
+class ManagerRequiredMixin:
 
-    def handle_no_permission(self):
-        raise PermissionDenied
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.groups.filter(name="manager").exists():
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -48,7 +49,7 @@ class MailingListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data['users'] = self.request.user.groups.filter(name="manager").exists()
+        # context_data['users'] = self.request.user.groups.filter(name="manager").exists()
         return context_data
 
     def get_queryset(self):
@@ -140,7 +141,6 @@ class MessageListView(LoginRequiredMixin, ListView):
         return context_data
 
 
-
 class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
@@ -175,8 +175,6 @@ class ClientMailingListView(LoginRequiredMixin, ListView):
 
 
 def toggle_client(request, pk, client_pk):
-    if not request.user.groups.filter(name="manager").exists():
-        raise PermissionDenied
     if ClientMailing.objects.filter(client_id=client_pk, mailing_id=pk).exists():
         ClientMailing.objects.filter(client_id=client_pk, mailing_id=pk).delete()
     else:
