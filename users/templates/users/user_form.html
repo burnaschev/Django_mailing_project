@@ -16,11 +16,22 @@
                     </form>
                 </div>
                 <div class="card-footer">
+                    {% if user.email_verified %}
+                        <h7 class="my-0 mr-md-auto font-weight-normal">Почта верифицирована</h7>
+                    {% else %}
+                        <h7 class="my-0 mr-md-auto font-weight-normal">Верифицируйте почту и получите доступ к созданию
+                            рассылок
+                        </h7>
+                        <a href="{% url 'users:verify_email_btn' object.pk %}" class="btn btn-outline-primary">Письмо с верификацией</a>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
                     <a href="{% url 'users:generate_new_password' %}" class="btn btn-outline-danger">Восстановить и
                         сгенерировать пароль</a>
                     <h7 class="my-0 mr-md-auto font-weight-normal">Пароль поступит на указанную почту</h7>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 {% endblock %}
