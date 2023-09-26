@@ -69,7 +69,7 @@ class MailingCreateView(LoginRequiredMixin, ManagerRequiredMixin, UserPassesTest
     success_url = reverse_lazy('mailing:list')
 
     def test_func(self):
-        return self.request.user.email_verified
+        return self.request.user.email_verified or self.request.user.is_superuser
 
     def handle_no_permission(self):
         return redirect(reverse_lazy('mailing:verification_failed'))
@@ -180,7 +180,7 @@ def toggle_client(request, pk, client_pk):
 
 
 def stop_mailing(request, pk):
-    if not request.user.groups.filter(name="manager").exists():
+    if not request.user.groups.filter(name="manager").exists() and not request.user.is_superuser:
         raise PermissionDenied
     mailing = Mailing.objects.get(pk=pk)
     if mailing.status == mailing.STARTED or mailing.status == mailing.CREATED:

@@ -39,7 +39,7 @@
                                 <a class="p-2 btn btn-outline-success mt-2"
                                    href="{% url 'mailing:mailing_clients' object.pk %}">Клиенты</a>
                             {% endif %}
-                            {% if user.is_staff %}
+                            {% if user.is_staff%}
                                 {% if object.status == object.STARTED %}
                                     <a class="p-2 btn btn-outline-success mt-2"
                                        href="{% url 'mailing:stop_mailing' object.pk %}">Остановить рассылку</a>
