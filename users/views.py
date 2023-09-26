@@ -28,7 +28,7 @@ class LoginView(BaseLoginView):
 class LogoutView(BaseLogoutView):
 
     def get_success_url(self):
-        return reverse_lazy('mailing:home')
+        return reverse_lazy('mailing:list')
 
 
 class RegisterView(CreateView):
