@@ -142,6 +142,7 @@ LOGIN_REDIRECT_URL = '/'
 
 LOGIN_URL = '/users/'
 
+
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')

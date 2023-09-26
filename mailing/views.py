@@ -20,7 +20,6 @@ class ManagerRequiredMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-@login_required
 def index(request):
     blog = Blog.objects.all()
     mailing = Mailing.objects.all()
@@ -129,6 +128,7 @@ class MessageListView(LoginRequiredMixin, ListView):
     extra_context = {
         'title': 'Список сообщений'
     }
+
 
 
 class MessageCreateView(LoginRequiredMixin, CreateView):

@@ -26,7 +26,9 @@ class LoginView(BaseLoginView):
 
 
 class LogoutView(BaseLogoutView):
-    pass
+
+    def get_success_url(self):
+        return reverse_lazy('mailing:home')
 
 
 class RegisterView(CreateView):
@@ -65,7 +67,6 @@ class UserUpdateView(UpdateView):
 class UserListView(ListView, ManagerRequiredMixin):
     model = User
 
-
     def get_queryset(self):
         if self.request.user.groups.filter(name="manager").exists() or self.request.user.is_superuser:
             return User.objects.filter(is_staff=False, is_superuser=False)
@@ -78,7 +79,7 @@ def generate_new_password(request):
     send_new_password(request.user.email, new_password)
     request.user.set_password(new_password)
     request.user.save()
-    return redirect(reverse('catalog:home'))
+    return redirect(reverse('mailing:home'))
 
 
 @login_required
