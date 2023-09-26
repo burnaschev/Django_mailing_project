@@ -54,8 +54,9 @@ def verify_email(request, token):
     return render(request, 'users/verification_success.html')
 
 def verify_email_btn(request, pk):
-    user = User.objects.get(pk=pk)
+    user = get_object_or_404(User, pk=pk)
     send_verify_email(request, user.verification_token, user.email)
+
     return render(request, 'mailing/verification_failed.html')
 
 class UserUpdateView(UpdateView):

@@ -10,7 +10,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from blog.models import Blog
 from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Mailing, ClientMailing, Client, Message
-from mailing.services import send_verify_email
+from mailing.services import send_mails
+from users.services import send_verify_email
 
 
 class ManagerRequiredMixin:
@@ -76,7 +77,6 @@ class MailingCreateView(LoginRequiredMixin, ManagerRequiredMixin, UserPassesTest
 
     def form_valid(self, form):
         self.object = form.save()
-        send_verify_email(self.object)
         self.object.users = self.request.user
         self.object.save()
 

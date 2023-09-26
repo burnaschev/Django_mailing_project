@@ -70,8 +70,3 @@ def send_mails():
                     send_mailing(mailing_settings, client_m)
 
 
-def send_verify_email(request):
-    user = get_object_or_404(User)
-    if user.email_verified:
-        messages.error(request, ("Ваш адрес электронной почты должен быть верифицирован, чтобы создать рассылку"))
-        return redirect(reverse('mailing:list'))
