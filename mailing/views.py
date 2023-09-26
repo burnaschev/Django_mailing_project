@@ -2,6 +2,7 @@ from random import sample
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
@@ -25,16 +26,25 @@ def index(request):
     mailing = Mailing.objects.all()
     mailing_is_active = Mailing.objects.filter(status='Started')
     client_mailing = ClientMailing.objects.all()
-    unique_clients = set([cm.client for cm in client_mailing])
+
+    unique_clients = cache.get('unique_clients')
+    if unique_clients is None:
+        unique_clients = set([cm.client for cm in client_mailing])
+        cache.set('unique_clients', unique_clients, 60)
 
     sample_size = min(len(blog), 3)
-    random_articles = sample(list(blog), k=sample_size)
+    random_articles = cache.get('random_articles')
+    if random_articles is None:
+        random_articles = sample(list(blog), k=sample_size)
+        cache.set('random_articles', random_articles, 60)
+
     context = {
         'random_articles': random_articles,
         'total_mailings': len(mailing),
         'active_mailings': len(mailing_is_active),
         'unique_clients': len(unique_clients)
     }
+
     return render(request, 'mailing/home.html', context)
 
 
@@ -136,7 +146,7 @@ class MessageListView(LoginRequiredMixin, ListView):
     }
 
 
-class MessageCreateView(LoginRequiredMixin,ManagerRequiredMixin, CreateView):
+class MessageCreateView(LoginRequiredMixin, ManagerRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy('mailing:messages_list')
@@ -188,6 +198,7 @@ def stop_mailing(request, pk):
         mailing.status = mailing.STARTED
         mailing.save()
     return redirect(reverse('mailing:list'))
+
 
 @login_required
 def verification_failed(request):
