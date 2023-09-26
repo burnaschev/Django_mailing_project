@@ -5,7 +5,7 @@ from mailing.apps import MailingConfig
 from mailing.views import MailingListView, MailingDetailView, MailingDeleteView, MailingUpdateView, MailingCreateView, \
     index, contacts, ClientListView, ClientDetailView, ClientCreateView, ClientUpdateView, ClientDeleteView, \
     MessageUpdateView, MessageListView, MessageCreateView, MessageDeleteView, ClientMailingListView, toggle_client, \
-    stop_mailing
+    stop_mailing, verification_failed
 
 app_name = MailingConfig.name
 
@@ -17,6 +17,7 @@ urlpatterns = [
     path('mailing/create/', cache_page(60)(MailingCreateView.as_view()), name='create'),
     path('mailing/edit/<int:pk>/', cache_page(60)(MailingUpdateView.as_view()), name='edit'),
     path('mailing/delete/<int:pk>/', MailingDeleteView.as_view(), name='delete'),
+    path('mailing/verification_failed/', verification_failed, name='verification_failed'),
 
     path('client/list/', ClientListView.as_view(), name='client_list'),
     path('client/view/<int:pk>/', cache_page(60)(ClientDetailView.as_view()), name='client_view'),

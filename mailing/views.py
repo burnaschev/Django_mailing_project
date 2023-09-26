@@ -1,7 +1,7 @@
 from random import sample
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
@@ -10,6 +10,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from blog.models import Blog
 from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Mailing, ClientMailing, Client, Message
+from mailing.services import send_verify_email
 
 
 class ManagerRequiredMixin:
@@ -61,14 +62,21 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
         return Mailing.objects.filter(users=self.request.user)
 
 
-class MailingCreateView(LoginRequiredMixin, ManagerRequiredMixin, CreateView):
+class MailingCreateView(LoginRequiredMixin, ManagerRequiredMixin, UserPassesTestMixin, CreateView):
     model = Mailing
     form_class = MailingForm
     permission_required = 'mailing.change_mailing'
     success_url = reverse_lazy('mailing:list')
 
+    def test_func(self):
+        return self.request.user.email_verified
+
+    def handle_no_permission(self):
+        return redirect(reverse_lazy('mailing:verification_failed'))
+
     def form_valid(self, form):
         self.object = form.save()
+        send_verify_email(self.object)
         self.object.users = self.request.user
         self.object.save()
 
@@ -130,7 +138,6 @@ class MessageListView(LoginRequiredMixin, ListView):
     }
 
 
-
 class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
@@ -183,3 +190,7 @@ def stop_mailing(request, pk):
         mailing.status = mailing.STARTED
         mailing.save()
     return redirect(reverse('mailing:list'))
+
+@login_required
+def verification_failed(request):
+    return render(request, 'mailing/verification_failed.html')

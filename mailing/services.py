@@ -1,9 +1,13 @@
 from datetime import datetime, timedelta
 
 from django.conf import settings
+from django.contrib import messages
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 
 from mailing.models import Log, Mailing
+from users.models import User
 
 
 def send_mailing(mailing_settings, client_m):
@@ -64,3 +68,10 @@ def send_mails():
 
                 else:
                     send_mailing(mailing_settings, client_m)
+
+
+def send_verify_email(request):
+    user = get_object_or_404(User)
+    if user.email_verified:
+        messages.error(request, ("Ваш адрес электронной почты должен быть верифицирован, чтобы создать рассылку"))
+        return redirect(reverse('mailing:list'))
