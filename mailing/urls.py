@@ -17,7 +17,7 @@ urlpatterns = [
     path('mailing/create/', cache_page(60)(MailingCreateView.as_view()), name='create'),
     path('mailing/edit/<int:pk>/', cache_page(60)(MailingUpdateView.as_view()), name='edit'),
     path('mailing/delete/<int:pk>/', MailingDeleteView.as_view(), name='delete'),
-    path('mailing/verification_failed/', verification_failed, name='verification_failed'),
+    path('mailing/verification_failed/', cache_page(60)(verification_failed), name='verification_failed'),
 
     path('client/list/', ClientListView.as_view(), name='client_list'),
     path('client/view/<int:pk>/', cache_page(60)(ClientDetailView.as_view()), name='client_view'),
@@ -27,7 +27,7 @@ urlpatterns = [
 
     path('messages/', MessageListView.as_view(), name='messages_list'),
     path('messages/create/', cache_page(60)(MessageCreateView.as_view()), name='messages_create'),
-    path('messages/update/<int:pk>/', MessageUpdateView.as_view(), name='messages_update'),
+    path('messages/update/<int:pk>/', cache_page(60)(MessageUpdateView.as_view()), name='messages_update'),
     path('messages/delete/<int:pk>/', cache_page(60)(MessageDeleteView.as_view()), name='messages_delete'),
 
     path('<int:pk>/clients/', ClientMailingListView.as_view(), name='mailing_clients'),

@@ -10,8 +10,6 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from blog.models import Blog
 from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Mailing, ClientMailing, Client, Message
-from mailing.services import send_mails
-from users.services import send_verify_email
 
 
 class ManagerRequiredMixin:
@@ -138,7 +136,7 @@ class MessageListView(LoginRequiredMixin, ListView):
     }
 
 
-class MessageCreateView(LoginRequiredMixin, CreateView):
+class MessageCreateView(LoginRequiredMixin,ManagerRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy('mailing:messages_list')
